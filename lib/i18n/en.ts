@@ -54,6 +54,7 @@ const en: Dict = {
     priority: 'Priority',
     subtotal: 'Total',
     overBudget: 'Exceeds the 5,000 PLN limit. Set priority to "High".',
+    perUnit: 'PLN/ea.',
     cancel: 'Cancel',
     submit: 'Place Order',
     save: 'Save Changes',
@@ -79,7 +80,26 @@ const en: Dict = {
     REJECTED: 'Rejected',
     CANCELLED: 'Cancelled',
   },
-  app: { title: 'IT Portal' },
+  app: {
+    title: 'IT Portal',
+    description: 'Internal IT equipment ordering portal',
+  },
+  errors: {
+    employeeNameRequired: 'Full name is required',
+    departmentRequired: 'Department is required',
+    justificationRequired: 'Justification is required',
+    invalidPriority: 'Priority must be: low, medium or high',
+    itemsRequired: 'Order must contain at least one item',
+    invalidQuantity: 'Item quantity must be an integer between 1 and 20',
+    overBudgetDetail:
+      'Order total ({total} PLN) exceeds {max} PLN. Change priority to "high" or reduce the order.',
+    orderNotFound: 'Order not found',
+    orderApprovedNoEdit: 'Approved order cannot be edited',
+    orderApprovedNoCancel: 'Approved order cannot be cancelled',
+    orderAlreadyCancelled: 'Order is already cancelled',
+    onlyPendingApprove: 'Only pending orders can be approved',
+    onlyPendingReject: 'Only pending orders can be rejected',
+  },
 }
 
 export default en

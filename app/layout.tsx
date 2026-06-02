@@ -9,9 +9,11 @@ import './globals.css'
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist-sans' })
 
-export const metadata: Metadata = {
-  title: 'Portal Zamówień IT',
-  description: 'Wewnętrzny portal zamawiania sprzętu IT',
+export async function generateMetadata(): Promise<Metadata> {
+  const cookieStore = await cookies()
+  const lang = (cookieStore.get(LANG_COOKIE)?.value ?? 'pl') as Lang
+  const t = getDict(lang)
+  return { title: t.app.title, description: t.app.description }
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

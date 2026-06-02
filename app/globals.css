@@ -17,3 +17,25 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
+
+button,
+[role="button"],
+select,
+input[type="submit"],
+input[type="button"],
+input[type="reset"],
+a {
+  cursor: pointer;
+}
+
+input,
+textarea {
+  cursor: text;
+}
+
+input:disabled,
+button:disabled,
+select:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+}

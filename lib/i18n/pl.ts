@@ -52,6 +52,7 @@ const pl = {
     priority: 'Priorytet',
     subtotal: 'Łącznie',
     overBudget: 'Przekroczono limit 5 000 PLN. Zmień priorytet na "Wysoki".',
+    perUnit: 'PLN/szt.',
     cancel: 'Anuluj',
     submit: 'Złóż zamówienie',
     save: 'Zapisz zmiany',
@@ -77,7 +78,26 @@ const pl = {
     REJECTED: 'Odrzucone',
     CANCELLED: 'Anulowane',
   },
-  app: { title: 'Portal IT' },
+  app: {
+    title: 'Portal IT',
+    description: 'Wewnętrzny portal zamawiania sprzętu IT',
+  },
+  errors: {
+    employeeNameRequired: 'Imię i nazwisko jest wymagane',
+    departmentRequired: 'Dział jest wymagany',
+    justificationRequired: 'Uzasadnienie jest wymagane',
+    invalidPriority: 'Priorytet musi być: low, medium lub high',
+    itemsRequired: 'Zamówienie musi zawierać co najmniej jeden przedmiot',
+    invalidQuantity: 'Ilość każdego przedmiotu musi być liczbą całkowitą od 1 do 20',
+    overBudgetDetail:
+      'Łączna wartość zamówienia ({total} PLN) przekracza {max} PLN. Zmień priorytet na "high" lub zmniejsz zamówienie.',
+    orderNotFound: 'Zamówienie nie istnieje',
+    orderApprovedNoEdit: 'Zatwierdzone zamówienie nie może być edytowane',
+    orderApprovedNoCancel: 'Zatwierdzone zamówienie nie może być anulowane',
+    orderAlreadyCancelled: 'Zamówienie jest już anulowane',
+    onlyPendingApprove: 'Tylko oczekujące zamówienia mogą być zatwierdzone',
+    onlyPendingReject: 'Tylko oczekujące zamówienia mogą być odrzucone',
+  },
 }
 
 export default pl

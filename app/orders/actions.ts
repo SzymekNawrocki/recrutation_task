@@ -2,10 +2,17 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
 import { prisma } from '@/lib/prisma'
 import { validateOrder, type OrderInput } from '@/lib/validation'
+import { getDict, LANG_COOKIE, type Lang } from '@/lib/i18n'
 
 type ActionResult = { ok: false; errors: Record<string, string> } | { ok: true }
+
+async function getLang(): Promise<Lang> {
+  const cookieStore = await cookies()
+  return (cookieStore.get(LANG_COOKIE)?.value ?? 'pl') as Lang
+}
 
 function parseItems(formData: FormData): OrderInput['items'] {
   const names = formData.getAll('itemName') as string[]
@@ -20,6 +27,8 @@ function parseItems(formData: FormData): OrderInput['items'] {
 }
 
 export async function createOrder(formData: FormData): Promise<ActionResult> {
+  const t = getDict(await getLang())
+
   const input: OrderInput = {
     employeeName: (formData.get('employeeName') as string) ?? '',
     department: (formData.get('department') as string) ?? '',
@@ -28,7 +37,7 @@ export async function createOrder(formData: FormData): Promise<ActionResult> {
     items: parseItems(formData),
   }
 
-  const { ok, errors } = validateOrder(input)
+  const { ok, errors } = validateOrder(input, t.errors)
   if (!ok) return { ok: false, errors }
 
   const order = await prisma.order.create({
@@ -52,10 +61,12 @@ export async function createOrder(formData: FormData): Promise<ActionResult> {
 }
 
 export async function updateOrder(id: string, formData: FormData): Promise<ActionResult> {
+  const t = getDict(await getLang())
+
   const existing = await prisma.order.findUnique({ where: { id } })
-  if (!existing) return { ok: false, errors: { _: 'Zamówienie nie istnieje' } }
+  if (!existing) return { ok: false, errors: { _: t.errors.orderNotFound } }
   if (existing.status === 'APPROVED') {
-    return { ok: false, errors: { _: 'Zatwierdzone zamówienie nie może być edytowane' } }
+    return { ok: false, errors: { _: t.errors.orderApprovedNoEdit } }
   }
 
   const input: OrderInput = {
@@ -66,7 +77,7 @@ export async function updateOrder(id: string, formData: FormData): Promise<Actio
     items: parseItems(formData),
   }
 
-  const { ok, errors } = validateOrder(input)
+  const { ok, errors } = validateOrder(input, t.errors)
   if (!ok) return { ok: false, errors }
 
   await prisma.order.update({
@@ -93,13 +104,15 @@ export async function updateOrder(id: string, formData: FormData): Promise<Actio
 }
 
 export async function cancelOrder(id: string): Promise<ActionResult> {
+  const t = getDict(await getLang())
+
   const existing = await prisma.order.findUnique({ where: { id } })
-  if (!existing) return { ok: false, errors: { _: 'Zamówienie nie istnieje' } }
+  if (!existing) return { ok: false, errors: { _: t.errors.orderNotFound } }
   if (existing.status === 'APPROVED') {
-    return { ok: false, errors: { _: 'Zatwierdzone zamówienie nie może być anulowane' } }
+    return { ok: false, errors: { _: t.errors.orderApprovedNoCancel } }
   }
   if (existing.status === 'CANCELLED') {
-    return { ok: false, errors: { _: 'Zamówienie jest już anulowane' } }
+    return { ok: false, errors: { _: t.errors.orderAlreadyCancelled } }
   }
 
   await prisma.order.update({ where: { id }, data: { status: 'CANCELLED' } })
@@ -110,10 +123,12 @@ export async function cancelOrder(id: string): Promise<ActionResult> {
 }
 
 export async function approveOrder(id: string): Promise<ActionResult> {
+  const t = getDict(await getLang())
+
   const existing = await prisma.order.findUnique({ where: { id } })
-  if (!existing) return { ok: false, errors: { _: 'Zamówienie nie istnieje' } }
+  if (!existing) return { ok: false, errors: { _: t.errors.orderNotFound } }
   if (existing.status !== 'PENDING') {
-    return { ok: false, errors: { _: 'Tylko oczekujące zamówienia mogą być zatwierdzone' } }
+    return { ok: false, errors: { _: t.errors.onlyPendingApprove } }
   }
 
   await prisma.order.update({ where: { id }, data: { status: 'APPROVED' } })
@@ -125,10 +140,12 @@ export async function approveOrder(id: string): Promise<ActionResult> {
 }
 
 export async function rejectOrder(id: string): Promise<ActionResult> {
+  const t = getDict(await getLang())
+
   const existing = await prisma.order.findUnique({ where: { id } })
-  if (!existing) return { ok: false, errors: { _: 'Zamówienie nie istnieje' } }
+  if (!existing) return { ok: false, errors: { _: t.errors.orderNotFound } }
   if (existing.status !== 'PENDING') {
-    return { ok: false, errors: { _: 'Tylko oczekujące zamówienia mogą być odrzucone' } }
+    return { ok: false, errors: { _: t.errors.onlyPendingReject } }
   }
 
   await prisma.order.update({ where: { id }, data: { status: 'REJECTED' } })

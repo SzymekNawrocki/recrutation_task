@@ -202,7 +202,7 @@ export default function OrderForm({ catalog, order }: Props) {
             {lines.map((line, i) => (
               <div key={i} className="flex items-center gap-3 py-2.5">
                 <span className="flex-1 text-sm text-slate-800 font-medium">{line.name}</span>
-                <span className="text-xs text-slate-500">{line.unitValue.toFixed(0)} PLN/szt.</span>
+                <span className="text-xs text-slate-500">{line.unitValue.toFixed(0)} {t.form.perUnit}</span>
                 <div className="flex items-center gap-1">
                   <button
                     type="button"
